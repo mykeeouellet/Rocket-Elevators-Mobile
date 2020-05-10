@@ -31,7 +31,9 @@ Various endpoints could be added to the mobile app to implement more features in
 ## Things to implement
 
 => Correct authentication and access.(Login)
+
 => Change the status of a specific elevator using the PUT method.(Elevator Details)
+
 => Change the Elevator Details screen to a modal on the home screen
 
 
