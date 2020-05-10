@@ -1,18 +1,25 @@
 import 'react-native-gesture-handler';
 import React, { useEffect, useState, Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, FlatList, ActivityIndicator, Image} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, FlatList, ActivityIndicator, Image, Modal} from 'react-native';
 import { globalStyles } from '../styles/global';
 import Card from '../shared/Card';
+import { MaterialIcons } from '@expo/vector-icons';
 
 export default function Home({ navigation }){
 // ========== Structure of the Home Page =========== //
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
+    const [modalOpen, setModalOpen] = useState(false);
+
+
+    function Separator() {
+        return <View style={styles.separator} />;
+      }
 
     useEffect(() => {
-        fetch('http://dummy.restapiexample.com/api/v1/employees')
+        fetch('https://rocketapimykee.azurewebsites.net/api/elevators/unavailable')
           .then((response) => response.json())
-          .then((json) => setData(json.data))
+          .then((json) => setData(json))
           .catch((error) => console.error(error))
           .finally(() => setLoading(false));
       }, []);
@@ -28,7 +35,6 @@ export default function Home({ navigation }){
         <View style={globalStyles.container}>
         <View style={styles.backgroundContainer}>
         <Image style={styles.backgroundImage} source={require('../assets/darkbuildingbackground.jpg')}/>
-
         </View>
         {isLoading ? <ActivityIndicator/> : (
         <FlatList
@@ -37,7 +43,13 @@ export default function Home({ navigation }){
             renderItem={({ item }) => (
                 <TouchableOpacity onPress={() => navigation.navigate('Elevators', item )}>
                 <Card>
-                <Text>{item.employee_name}, {item.id}</Text>
+                <View style={styles.cardHeader}>
+                <Text style={styles.title}>Elevator: #{item.id}</Text>
+                <Image style={styles.logo,{width: 50, height: 60, resizeMode: 'stretch', marginLeft: 20}} source={require('../assets/icon-R.png')}/>
+                </View>
+                <Separator />
+                <Text>Serial Number: {item.elevator_serial_number}</Text>
+                <Text>Model: {item.elevator_model}</Text>
                 </Card>
                 </TouchableOpacity>
             )}
@@ -54,6 +66,15 @@ const styles = StyleSheet.create({
         backgroundColor: '#ff0000',
         alignContent: 'center',
         justifyContent: 'center'
+    },
+    cardHeader: {
+       flexDirection: 'row',
+       alignItems: 'center'
+    },
+    title: {
+        fontSize: 20,
+        fontWeight: 'bold',
+
     },
     text: {
         flex: 1,
@@ -76,10 +97,15 @@ const styles = StyleSheet.create({
         left: 0,
         width: '100%',
         height: '100%'
-      },
-      backgroundImage:{
+    },
+    backgroundImage:{
         flex: 1,
         width: null,
         height: null
-      },
+    },
+    separator: {
+        marginVertical: 8,
+        borderBottomColor: '#737373',
+        borderBottomWidth: StyleSheet.hairlineWidth,
+    },
 });
